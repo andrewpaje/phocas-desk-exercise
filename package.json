@@ -1,0 +1,33 @@
+{
+    "name": "@phocassoftware/desk-exercise",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "build": "turbo run build",
+        "start": "turbo run start",
+        "check": "turbo run check",
+        "check:fix": "turbo run check:fix",
+        "test": "turbo run test",
+        "test:ci": "turbo run test:ci",
+        "types:check": "turbo run types:check",
+        "codegen": "graphql-codegen --config codegen.ts"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
+        "@graphql-codegen/cli": "5.0.5",
+        "@graphql-codegen/client-preset": "~4.8.0",
+        "@graphql-codegen/typescript": "4.1.6",
+        "@graphql-typed-document-node/core": "^3.2.0",
+        "@types/node": "^22.13.9",
+        "turbo": "^2.4.4",
+        "typescript": "^5.8.2"
+    },
+    "workspaces": {
+        "packages": [
+            "frontend",
+            "backend"
+        ]
+    },
+    "packageManager": "pnpm@10.8.1"
+}

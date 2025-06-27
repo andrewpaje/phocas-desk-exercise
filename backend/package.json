@@ -1,0 +1,17 @@
+{
+    "name": "@phocassoftware/desk-exercise-api",
+    "private": true,
+    "scripts": {
+        "build": "mvn compile",
+        "clean": "mvn clean",
+        "check": "mvn formatter:validate",
+        "check:fix": "mvn formatter:format",
+        "test": "mvn test",
+        "test:ci": "mvn test",
+        "start": "mvn compile exec:java -Dexec.mainClass=com.phocas.exercise.desks.App"
+    },
+    "engines": {
+        "node": ">=20",
+        "pnpm": ">=9"
+    }
+}

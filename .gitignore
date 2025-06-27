@@ -1,0 +1,14 @@
+node_modules
+
+# Visual Studio Code
+/.vscode
+
+# Jetbrains IDE
+/.idea
+
+.nx/cache
+.nx/workspace-data
+.turbo
+/backend/target
+/backend/database
+backend/dynamodb-local-metadata.json

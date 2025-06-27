@@ -1,0 +1,15 @@
+{
+    "$schema": "https://turborepo.org/schema.json",
+    "tasks": {
+        "test": {},
+        "build": {},
+        "start": {
+            "persistent": true,
+            "cache": false
+        },
+        "check": {},
+        "check:fix": {},
+        "test:ci": {},
+        "types:check": {}
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "name": "@phocassoftware/desk-exercise-app",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "check": "biome check ./src && pnpm run types:check",
+        "check:fix": "biome check ./src --fix && pnpm run types:check",
+        "types:check": "tsc",
+        "test": "vitest",
+        "test:ci": "vitest run",
+        "start": "vite"
+    },
+    "dependencies": {
+        "@apollo/client": "^3.13.1",
+        "@emotion/css": "^11.13.5",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.0",
+        "@mui/icons-material": "^6.4.4",
+        "@mui/material": "^6.4.4",
+        "@toolpad/core": "^0.14.0",
+        "graphql": "^16.10.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router": "^7.1.5"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.2.0",
+        "@testing-library/user-event": "^14.6.1",
+        "@types/react": "^19.0.9",
+        "@types/react-dom": "^19.0.3",
+        "@vitejs/plugin-react": "^4.3.4",
+        "@vitest/coverage-v8": "^3.0.5",
+        "@vitest/ui": "^3.0.5",
+        "happy-dom": "^17.1.1",
+        "tsx": "^4.19.2",
+        "typescript": "^5.7.3",
+        "vite": "^6.1.0",
+        "vitest": "^3.0.5",
+        "vitest-canvas-mock": "^0.3.3",
+        "vitest-mock-extended": "^3.0.0"
+    },
+    "engines": {
+        "node": ">=20",
+        "pnpm": ">=9"
+    }
+}

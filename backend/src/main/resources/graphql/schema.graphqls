@@ -1,0 +1,4 @@
+# spring still scans file and it can't be empty
+type Query {
+    ignored: Boolean
+}

@@ -1,0 +1,109 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+    "formatter": {
+      "enabled": true,
+      "formatWithErrors": false,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf",
+      "lineWidth": 100,
+      "attributePosition": "auto",
+      "ignore": [
+        "**/node_modules",
+        "**/*.tsbuildinfo",
+        "**/.nx",
+        "**/package-lock.json",
+        "**/build",
+        "**/bin",
+        "**/obj",
+        "**/dist",
+        "**/storybook-static",
+        ".storybook/public",
+        "src/generated",
+        "**/backend"
+      ]
+    },
+    "vcs": {
+      "enabled": true,
+      "clientKind": "git",
+      "defaultBranch": "origin/main",
+      "useIgnoreFile": true
+    },
+    "organizeImports": { "enabled": true },
+    "linter": {
+      "enabled": true,
+      "rules": { "recommended": true },
+      "ignore": ["packages/*/lib/**/*", "src/generated/**/*"]
+    },
+    "json": {
+      "parser": {
+        "allowComments": true
+      }
+    },
+    "javascript": {
+      "formatter": {
+        "jsxQuoteStyle": "single",
+        "quoteProperties": "asNeeded",
+        "trailingCommas": "all",
+        "semicolons": "always",
+        "arrowParentheses": "always",
+        "bracketSpacing": true,
+        "bracketSameLine": false,
+        "quoteStyle": "single",
+        "attributePosition": "auto"
+      }
+    },
+    "overrides": [
+      {
+        "include": ["**/*.js", "**/*.ts", "**/*.tsx"],
+        "linter": {
+          "rules": {
+            "style": {
+              "useImportType": "info",
+              "noUnusedTemplateLiteral": "info",
+              "noUselessElse": "info",
+              "useEnumInitializers": "info",
+              "useTemplate": "info",
+              "noInferrableTypes": "info",
+              "noNonNullAssertion": "info",
+              "noParameterAssign": "info",
+              "useDefaultParameterLast": "info",
+              "useNumberNamespace": "info"
+            },
+            "complexity": {
+              "useOptionalChain": "info",
+              "useLiteralKeys": "info",
+              "noUselessConstructor": "info",
+              "noForEach": "info",
+              "noUselessThisAlias": "info",
+              "noExtraBooleanCast": "info",
+              "noExcessiveNestedTestSuites": "info",
+              "noThisInStatic": "info",
+              "useFlatMap": "info",
+              "noStaticOnlyClass": "info",
+              "useArrowFunction": "warn"
+            },
+            "a11y": {
+              "noSvgWithoutTitle": "warn"
+            },
+            "correctness": {
+              "useJsxKeyInIterable": "warn",
+              "noFlatMapIdentity": "warn",
+              "noUnusedImports": "warn",
+              "noUnusedVariables": "warn"
+            },
+            "suspicious": {
+              "noImplicitAnyLet": "warn",
+              "noExportsInTest": "warn",
+              "noEmptyInterface": "warn",
+              "noConsoleLog": "warn",
+              "useAwait": "warn"
+            },
+            "performance": {
+              "noAccumulatingSpread": "warn"
+            }
+          }
+        }
+      }
+    ]
+  }
