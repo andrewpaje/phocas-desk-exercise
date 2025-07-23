@@ -4,9 +4,16 @@ import { calculateDeskLayout } from '../calculateDeskLayout';
 import { PEOPLE_QUERY } from '../queries/people';
 
 export default function LayoutPage() {
-  const { loading: loadingUsers, error: errorsUsers, data: dataUsers } = useQuery(PEOPLE_QUERY);
+  const {
+    loading: loadingUsers,
+    error: errorsUsers,
+    data: dataUsers
+  } = useQuery(PEOPLE_QUERY, {
+    // Show cached data instantly, then refetch in background
+    fetchPolicy: 'cache-and-network',
+  });
 
-  if (loadingUsers) return <p>Loading...</p>;
+  if (loadingUsers && !dataUsers) return <p>Loading...</p>;
   if (errorsUsers) return <p>Error : {errorsUsers.message}</p>;
 
   const people = calculateDeskLayout(dataUsers?.people ?? []);
