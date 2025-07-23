@@ -15,12 +15,15 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { PUT_TEAM, TEAM_QUERY, DELETE_TEAM } from '../queries/teams';
+import { SET_TEAM, PEOPLE_QUERY } from '../queries/people'
 
 export default function TeamsPage() {
   const [newTeam, setNewTeam] = useState<string>('');
   const client = useApolloClient();
 
   const { loading, error, data } = useQuery(TEAM_QUERY);
+  const { loading: loadingPeople, error: errorPeople, data: _dataPeople } = useQuery(TEAM_QUERY);
+
   const [putTeam] = useMutation(PUT_TEAM, {
     update(cache, { data }, { variables }) {
       let teams = cache.readQuery({ query: TEAM_QUERY })?.teams;
@@ -48,8 +51,56 @@ export default function TeamsPage() {
     },
   });
 
-  if (loading) return <p>Loading...</p>;
+  const [setTeam] = useMutation(SET_TEAM, {
+    update(cache, { data }) {
+      let teams = cache.readQuery({ query: TEAM_QUERY })?.teams;
+      if (!data || !teams) {
+        return;
+      }
+
+      teams = teams.map((team) => {
+
+        const memberIsCurrentlyInThisTeam = team.members.some(
+          (member: { id: string; name: string }) => member.id === data.setTeam.id
+        );
+
+        if(memberIsCurrentlyInThisTeam) {
+          const newMembers = team.members.filter(
+            (member: { id: string; name: string }) => member.id !== data.setTeam.id
+          );
+
+          return {
+            ...team,
+            members: newMembers,
+          };
+        } else {
+          return team
+        }
+      })
+
+      cache.writeQuery({
+        query: TEAM_QUERY,
+        data: { teams },
+      });
+
+      // Update the people list as well
+      let people = cache.readQuery({ query: PEOPLE_QUERY })?.people;
+      if (!data || !people) {
+        return;
+      }
+
+      people = people.map((person) => (person.id === data.setTeam.id ? data.setTeam : person));
+
+      cache.writeQuery({
+        query: PEOPLE_QUERY,
+        data: { people },
+      });
+    },
+  });
+
+  if (loading || loadingPeople) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
+  if (errorPeople) return <p>Error : {errorPeople.message}</p>;
 
   const handleAddTeam = async () => {
     if (newTeam.trim()) {
@@ -60,6 +111,10 @@ export default function TeamsPage() {
 
   const handleDeleteTeam = async (teamId: string) => {
     await deleteTeam({ variables: { id: teamId } });
+  };
+
+  const handleDeleteMember = async (userId: string) => {
+    await setTeam({ variables: { userId, teamId: 'none' } });
   };
 
   const handleEditTeamChange = (teamId: string, name: string) => {
@@ -108,7 +163,12 @@ export default function TeamsPage() {
                 <TableCell>
                   <Stack spacing={1} direction='row'>
                     {team.members.map((member) => (
-                      <Chip key={member.id} label={member.name} color='primary' />
+                      <Chip
+                        key={member.id}
+                        label={member.name}
+                        color='primary'
+                        onDelete={() => handleDeleteMember(member.id)}
+                      />
                     ))}
                   </Stack>
                 </TableCell>
