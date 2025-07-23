@@ -14,7 +14,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import { PUT_TEAM, TEAM_QUERY } from '../queries/teams';
+import { PUT_TEAM, TEAM_QUERY, DELETE_TEAM } from '../queries/teams';
 
 export default function TeamsPage() {
   const [newTeam, setNewTeam] = useState<string>('');
@@ -38,6 +38,16 @@ export default function TeamsPage() {
       });
     },
   });
+
+  const [deleteTeam] = useMutation(DELETE_TEAM, {
+    update(cache, { data }) {
+      if (data?.deleteTeam) {
+        const team = cache.identify(data.deleteTeam);
+        cache.evict({ id: team });
+      }
+    },
+  });
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
@@ -48,7 +58,9 @@ export default function TeamsPage() {
     }
   };
 
-  const handleDeleteTeam = async (_teamId: string) => {};
+  const handleDeleteTeam = async (teamId: string) => {
+    await deleteTeam({ variables: { id: teamId } });
+  };
 
   const handleEditTeamChange = (teamId: string, name: string) => {
     let teams = data?.teams;

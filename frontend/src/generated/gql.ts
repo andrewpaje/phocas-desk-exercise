@@ -1,6 +1,6 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 /* eslint-disable */
 import * as types from './graphql';
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 
 /**
  * Map of all GraphQL operations in the project.
@@ -20,6 +20,7 @@ type Documents = {
     "\n  mutation setTeam($userId: ID!, $teamId: ID!) {\n    setTeam(userId: $userId, teamId: $teamId) {\n      id\n      name\n      dogStatus\n      team {\n      id\n      name\n      }\n    }\n  }\n  ": typeof types.SetTeamDocument,
     "\n  query teams {\n    teams {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n": typeof types.TeamsDocument,
     "\n  mutation putTeam($id: ID, $name: String!) {\n    putTeam(id: $id, name: $name) {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n  ": typeof types.PutTeamDocument,
+    "\n  mutation deleteTeam($id: ID!) {\n    deleteTeam(id: $id) {\n      id\n    }\n  }\n  ": typeof types.DeleteTeamDocument,
 };
 const documents: Documents = {
     "\n  query people {\n    people {\n      id\n      name\n      dogStatus\n      team {\n    id\n    name\n    }\n    }\n  }\n": types.PeopleDocument,
@@ -28,6 +29,7 @@ const documents: Documents = {
     "\n  mutation setTeam($userId: ID!, $teamId: ID!) {\n    setTeam(userId: $userId, teamId: $teamId) {\n      id\n      name\n      dogStatus\n      team {\n      id\n      name\n      }\n    }\n  }\n  ": types.SetTeamDocument,
     "\n  query teams {\n    teams {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n": types.TeamsDocument,
     "\n  mutation putTeam($id: ID, $name: String!) {\n    putTeam(id: $id, name: $name) {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n  ": types.PutTeamDocument,
+    "\n  mutation deleteTeam($id: ID!) {\n    deleteTeam(id: $id) {\n      id\n    }\n  }\n  ": types.DeleteTeamDocument,
 };
 
 /**
@@ -68,6 +70,10 @@ export function graphql(source: "\n  query teams {\n    teams {\n      id\n     
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation putTeam($id: ID, $name: String!) {\n    putTeam(id: $id, name: $name) {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n  "): (typeof documents)["\n  mutation putTeam($id: ID, $name: String!) {\n    putTeam(id: $id, name: $name) {\n      id\n      name\n      members {\n        id\n        name\n      }\n    }\n  }\n  "];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation deleteTeam($id: ID!) {\n    deleteTeam(id: $id) {\n      id\n    }\n  }\n  "): (typeof documents)["\n  mutation deleteTeam($id: ID!) {\n    deleteTeam(id: $id) {\n      id\n    }\n  }\n  "];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

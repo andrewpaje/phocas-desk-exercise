@@ -62,4 +62,10 @@ public class Team extends Table {
 		return context.database().put(team);
 	}
 
+	@Mutation
+	public static Team deleteTeam(ApiContext context, @Id String id) {
+		var team = context.database().get(Team.class, id);
+		return context.database().delete(team, true);
+	}
+
 }

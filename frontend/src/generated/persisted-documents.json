@@ -4,5 +4,6 @@
   "d06faa08dda76e4e607a14fea136fec5a3aee072": "mutation deletePerson($id: ID!) { deletePerson(id: $id) { id } }",
   "362e973d94c6dda546f11e78e95621b997e1d11d": "mutation setTeam($teamId: ID!, $userId: ID!) { setTeam(userId: $userId, teamId: $teamId) { dogStatus id name team { id name } } }",
   "8d815dec577623ab1ef62c59ce4d338e9012ee94": "query teams { teams { id members { id name } name } }",
-  "63d9c01b5a7e611c70fba6895792bafd067850ff": "mutation putTeam($id: ID, $name: String!) { putTeam(id: $id, name: $name) { id members { id name } name } }"
+  "63d9c01b5a7e611c70fba6895792bafd067850ff": "mutation putTeam($id: ID, $name: String!) { putTeam(id: $id, name: $name) { id members { id name } name } }",
+  "d6637cf742bbe6716a15b2b1538757acf8b56401": "mutation deleteTeam($id: ID!) { deleteTeam(id: $id) { id } }"
 }
