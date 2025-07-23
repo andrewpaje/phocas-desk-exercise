@@ -14,8 +14,8 @@ import {
   TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import { PUT_TEAM, TEAM_QUERY, DELETE_TEAM } from '../queries/teams';
-import { SET_TEAM, PEOPLE_QUERY } from '../queries/people'
+import { PEOPLE_QUERY, SET_TEAM } from '../queries/people';
+import { DELETE_TEAM, PUT_TEAM, TEAM_QUERY } from '../queries/teams';
 
 export default function TeamsPage() {
   const [newTeam, setNewTeam] = useState<string>('');
@@ -59,24 +59,23 @@ export default function TeamsPage() {
       }
 
       teams = teams.map((team) => {
-
         const memberIsCurrentlyInThisTeam = team.members.some(
-          (member: { id: string; name: string }) => member.id === data.setTeam.id
+          (member: { id: string; name: string }) => member.id === data.setTeam.id,
         );
 
-        if(memberIsCurrentlyInThisTeam) {
+        if (memberIsCurrentlyInThisTeam) {
           const newMembers = team.members.filter(
-            (member: { id: string; name: string }) => member.id !== data.setTeam.id
+            (member: { id: string; name: string }) => member.id !== data.setTeam.id,
           );
 
           return {
             ...team,
             members: newMembers,
           };
-        } else {
-          return team
         }
-      })
+
+        return team;
+      });
 
       cache.writeQuery({
         query: TEAM_QUERY,

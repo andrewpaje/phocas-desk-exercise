@@ -1,18 +1,18 @@
 import { DogStatus, type PeopleQuery } from './generated/graphql';
-import { reorderSubArray } from './helper/array'
+import { reorderSubArray } from './helper/array';
 
 type Person = PeopleQuery['people'][0];
 
 export enum TeamCategory {
-  DOG_HATERS, // No HAVES, only AVOID and LIKES
-  MIXED, // Atleast 1 of each
-  NO_TEAM, // No team
-  DOG_LOVERS, // No AVOID, only LIKES and HAVES
+  DOG_HATERS = 0, // No HAVES, only AVOID and LIKES
+  MIXED = 1, // Atleast 1 of each
+  NO_TEAM = 2, // No team
+  DOG_LOVERS = 3, // No AVOID, only LIKES and HAVES
 }
 
 type TeamSummary = {
-  teamId: string | null,
-  category: TeamCategory
+  teamId: string | null;
+  category: TeamCategory;
 };
 
 const DogStatusOrder: Record<DogStatus, number> = {
@@ -50,7 +50,7 @@ export const calculateDeskLayout = (people: Person[]): Person[] => {
   // Source: https://v8.dev/features/stable-sort
   // O(n) at best
   // O(n log n) at average / worst
-  let sortedPeople: Person[] = [...people]
+  const sortedPeople: Person[] = [...people];
   sortedPeople.sort(sortByTeamAndDogStatus);
 
   // Traverse the list again to categorised the team based on team's dog status
@@ -59,9 +59,9 @@ export const calculateDeskLayout = (people: Person[]): Person[] => {
 
   // Map for better efficient lookups
   const teamRankMap = new Map<string, number>();
-  teamSummaries.forEach(tp => {
-    teamRankMap.set(tp.teamId as string, tp.category);
-  });
+  for (const teamSummary of teamSummaries) {
+    teamRankMap.set(teamSummary.teamId as string, teamSummary.category);
+  }
 
   // Re-sort the sorted list of people by moving the teams based on the ranking on team's category
   // O(n log n)
@@ -77,45 +77,60 @@ export const calculateDeskLayout = (people: Person[]): Person[] => {
     }
 
     // Secondary sort - if ranks are equal, sort by team id alphabetically
-    if(personA.team && personB.team) {
-      const teamIdComparison = (personA.team?.id as string).localeCompare(personB.team?.id as string);
+    if (personA.team && personB.team) {
+      const teamIdComparison = (personA.team?.id as string).localeCompare(
+        personB.team?.id as string,
+      );
       if (teamIdComparison !== 0) {
         return teamIdComparison;
       }
     }
 
-    return 0
+    return 0;
   });
 
   // Finally, we move the people who like and have dogs alternately
   // O(n)
-  let currTeam: string | undefined = undefined
-  let startPointer: number = 0
-  let startSearchFlag: boolean = false
-  let updatedPeople: Person[] = [...sortedPeople]
-  
+  let currTeam: string | undefined = undefined;
+  let startPointer = 0;
+  let startSearchFlag = false;
+  let updatedPeople: Person[] = [...sortedPeople];
+
   sortedPeople.forEach((person: Person, index: number) => {
-    if(!currTeam) {
-      currTeam = person.team?.id
+    if (!currTeam) {
+      currTeam = person.team?.id;
     }
 
     // We re-order the subarray based on the sorting logic
-    if(startSearchFlag && (person.team?.id != currTeam
-      || (person.team?.id == currTeam && person.dogStatus === DogStatus.Avoid))) {
-      updatedPeople = reorderSubArray(updatedPeople, startPointer, index - 1, insertPeopleWithDogLogic)
-      startSearchFlag = false
+    if (
+      startSearchFlag &&
+      (person.team?.id !== currTeam ||
+        (person.team?.id === currTeam && person.dogStatus === DogStatus.Avoid))
+    ) {
+      updatedPeople = reorderSubArray(
+        updatedPeople,
+        startPointer,
+        index - 1,
+        insertPeopleWithDogLogic,
+      );
+      startSearchFlag = false;
     }
 
     // Trigger search flag if we found our first non Avoid status
-    if(!startSearchFlag && person.dogStatus !== DogStatus.Avoid) {
-      currTeam = person.team?.id
-      startPointer = index
-      startSearchFlag = true
+    if (!startSearchFlag && person.dogStatus !== DogStatus.Avoid) {
+      currTeam = person.team?.id;
+      startPointer = index;
+      startSearchFlag = true;
     }
-  })
+  });
 
-  if(startSearchFlag) {
-    updatedPeople = reorderSubArray(updatedPeople, startPointer, updatedPeople.length - 1, insertPeopleWithDogLogic)
+  if (startSearchFlag) {
+    updatedPeople = reorderSubArray(
+      updatedPeople,
+      startPointer,
+      updatedPeople.length - 1,
+      insertPeopleWithDogLogic,
+    );
   }
 
   return updatedPeople;
@@ -125,13 +140,13 @@ const sortByTeamAndDogStatus = (personA: Person, personB: Person) => {
   // Apply sort only if teams on both person is not null
   if (personA.team && personB.team) {
     // Group by Team, order of the team should not matter
-    if (personA.team.id != personB.team.id) return personA.team.id.localeCompare(personB.team.id);
+    if (personA.team.id !== personB.team.id) return personA.team.id.localeCompare(personB.team.id);
   }
 
   // If both have no team, we still apply here secondary condition of Dog Status sort
   // After getting grouped by team, sort to follow: Avoid - Like - Have
   if (DogStatusOrder[personA.dogStatus] < DogStatusOrder[personB.dogStatus]) return -1;
-  else if (DogStatusOrder[personA.dogStatus] > DogStatusOrder[personB.dogStatus]) return 1;
+  if (DogStatusOrder[personA.dogStatus] > DogStatusOrder[personB.dogStatus]) return 1;
 
   return 0;
 };
@@ -141,89 +156,90 @@ const sortTeamsByCategory = (people: Person[]): TeamSummary[] => {
     [DogStatus.Avoid]: 0,
     [DogStatus.Like]: 0,
     [DogStatus.Have]: 0,
-  }
+  };
 
   let currTeam: TeamSummary = {
     teamId: null,
-    category: TeamCategory.NO_TEAM
-  }
-  let teamSummaries: TeamSummary[] = []
+    category: TeamCategory.NO_TEAM,
+  };
+  const teamSummaries: TeamSummary[] = [];
 
-  people.forEach((person: Person) => {
-    if(!currTeam.teamId) {
+  for (const person of people) {
+    if (!currTeam.teamId) {
       currTeam = {
         teamId: person.team?.id ?? null,
-        category: TeamCategory.NO_TEAM
-      }
+        category: TeamCategory.NO_TEAM,
+      };
     }
 
-    if(currTeam && currTeam.teamId != (person.team?.id ?? null)) {
+    if (currTeam && currTeam.teamId !== (person.team?.id ?? null)) {
       // Push Current Team to summaries
-      currTeam.category = categoriseTeam(teamDogStatusCount)
-      teamSummaries.push(currTeam)
+      currTeam.category = categoriseTeam(teamDogStatusCount);
+      teamSummaries.push(currTeam);
 
       // Refresh pointers
       currTeam = {
         teamId: person.team?.id ?? null,
-        category: TeamCategory.NO_TEAM
-      }
-      teamDogStatusCount.AVOID = 0
-      teamDogStatusCount.HAVE = 0
-      teamDogStatusCount.LIKE = 0
+        category: TeamCategory.NO_TEAM,
+      };
+      teamDogStatusCount.AVOID = 0;
+      teamDogStatusCount.HAVE = 0;
+      teamDogStatusCount.LIKE = 0;
     }
-    
-    switch(person.dogStatus) {
-    case DogStatus.Avoid:
-      teamDogStatusCount.AVOID++
-      break
-    case DogStatus.Have:
-      teamDogStatusCount.HAVE++
-      break
-    case DogStatus.Like:
-      teamDogStatusCount.LIKE++
-      break
-    }
-  });
 
-  currTeam.category = categoriseTeam(teamDogStatusCount)
-  teamSummaries.push(currTeam)
+    switch (person.dogStatus) {
+      case DogStatus.Avoid:
+        teamDogStatusCount.AVOID++;
+        break;
+      case DogStatus.Have:
+        teamDogStatusCount.HAVE++;
+        break;
+      case DogStatus.Like:
+        teamDogStatusCount.LIKE++;
+        break;
+    }
+  }
+
+  currTeam.category = categoriseTeam(teamDogStatusCount);
+  teamSummaries.push(currTeam);
 
   return teamSummaries.sort((teamA: TeamSummary, teamB: TeamSummary) => {
     // Order all teams based on category enum ordering
     return teamA.category - teamB.category;
-  })
-}
+  });
+};
 
 const categoriseTeam = (teamDogStatusCount: Record<DogStatus, number>) => {
-  if(teamDogStatusCount.AVOID == 0) return TeamCategory.DOG_LOVERS
+  if (teamDogStatusCount.AVOID === 0) return TeamCategory.DOG_LOVERS;
 
-  if(teamDogStatusCount.HAVE == 0) return TeamCategory.DOG_HATERS
+  if (teamDogStatusCount.HAVE === 0) return TeamCategory.DOG_HATERS;
 
-  if(teamDogStatusCount.AVOID > 0 && teamDogStatusCount.HAVE > 0) return TeamCategory.MIXED
+  if (teamDogStatusCount.AVOID > 0 && teamDogStatusCount.HAVE > 0) return TeamCategory.MIXED;
 
-  return TeamCategory.NO_TEAM
+  return TeamCategory.NO_TEAM;
 };
 
 const insertPeopleWithDogLogic = (subArray: Person[]): Person[] => {
-  if(subArray.length <= 3) {
-    return subArray
+  if (subArray.length <= 3) {
+    return subArray;
   }
 
   // Find split point by comparing dogStatus is not the same as 1st index
   const splitPoint = subArray.findIndex(
-    (item: Person, index: number, arr: Person[]) => index > 0 && item.dogStatus !== arr[0].dogStatus
-  )
+    (item: Person, index: number, arr: Person[]) =>
+      index > 0 && item.dogStatus !== arr[0].dogStatus,
+  );
 
-  const resultArray: Person[] = []
-  if(splitPoint != -1) {
+  const resultArray: Person[] = [];
+  if (splitPoint !== -1) {
     const groupA = subArray.slice(0, splitPoint);
     const groupB = subArray.slice(splitPoint);
 
-    let [indexA, indexB] = [0, 0]
+    let [indexA, indexB] = [0, 0];
     // Alternate them until 1 index runs out
-    while(indexA < groupA.length && indexB < groupB.length) {
-      resultArray.push(groupA[indexA++])
-      resultArray.push(groupB[indexB++])
+    while (indexA < groupA.length && indexB < groupB.length) {
+      resultArray.push(groupA[indexA++]);
+      resultArray.push(groupB[indexB++]);
     }
 
     // Exhaust the remaining items and add to the end
@@ -238,5 +254,5 @@ const insertPeopleWithDogLogic = (subArray: Person[]): Person[] => {
     return resultArray;
   }
 
-  return subArray
-}
+  return subArray;
+};

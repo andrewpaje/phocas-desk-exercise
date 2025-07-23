@@ -7,7 +7,7 @@ export default function LayoutPage() {
   const {
     loading: loadingUsers,
     error: errorsUsers,
-    data: dataUsers
+    data: dataUsers,
   } = useQuery(PEOPLE_QUERY, {
     // Show cached data instantly, then refetch in background
     fetchPolicy: 'cache-and-network',
